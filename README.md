@@ -1,1 +1,1 @@
-# HaskellByBegginers
+# HaskellByBeginners
