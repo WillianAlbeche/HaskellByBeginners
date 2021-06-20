@@ -74,9 +74,10 @@ ordenaUne []  = []
 ordenaUne [x] = [x]
 ordenaUne xs = uneOrdenado (ordenaUne ys) (ordenaUne zs)
             where (ys,zs)     = splitAt ((length xs) `div` 2) xs
-
-
 {-
+
+
+ß
 5) Explique a função padrão zipWith cuja definição é a seguinte:
 zipWith :: (a -> b -> c) -> [a] -> [b] -> [c]
 zipWith f _ _           = []
@@ -99,15 +100,15 @@ Uma única função de alta ordem pode ser usada para uma enorme variedade de ta
 
 {-
 6) A função cresc determina se uma lista está em ordem crescente:
--}
+
 cresc :: (Ord a) => [a] -> Bool
 cresc []       = True
 cresc [x]      = True
 cresc (x:y:xs) = (x <= y) && cresc (y:xs)
-{-
-
 -}
 
+cresc :: (Ord a) => [a] -> Bool
+cresc xs = and ( zipWith (<=) xs (tail xs))
 
 
 {-
