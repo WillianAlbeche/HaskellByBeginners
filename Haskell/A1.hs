@@ -12,7 +12,7 @@ insere x (y:ys) | x <= y    = x : y : ys
                 | otherwise = y : insere x ys
 
 {-
-insere x [y, ys] ******
+insere x [y, ys]
 insere 3 [1,2,4,5]
 1 : insere 3 [2,4,5]
 1 : (2 : insere 3 [4,5])
@@ -20,6 +20,10 @@ insere 3 [1,2,4,5]
 1 : (2 : (3 : 4 : 5))
 [1,2,3,4,5] 
 -}
+
+
+
+
 
 {-
 2) Usando a função insere, defina a função ordenaInsere :: [Int] -> [Int] 
@@ -33,13 +37,20 @@ ordenaInsere (x:xs) = insere x (ordenaInsere xs)
 {-
 ordenaInsere [3,2,1,4]
 insere 3 (ordenaInsere [2,1,4])
-...
-insere 3 (ordenaInsere 2 ( ordenaInsere 1 (ordenaInsere 4 [])))
-insere 3 (ordenaInsere 2 ( ordenaInsere 1 ([4])))
-insere 3 (ordenaInsere 2 ( [1,4]))
-insere 3 ([1,2,4])
-[1,2,3,4]
+insere 3 (insere 2 (ordenaInsere ([1,4])))
+insere 3 (insere 2 (ordenaInsere ([1,4])))
+insere 3 (insere 2 (insere 1 (ordenaInsere [4]))))
+insere 3 (insere 2 (insere 1 (insere 4 (ordenaInsere []))))
+insere 3 (insere 2 (insere 1 (insere 4 [])))
+insere 3 (insere 2 (insere 1 [4]))
+insere 3 (insere 2 [1,4])
+insere 3 [1,2,4]
+insere [1,2,3,4]
 -}
+
+
+
+
 
 {-
 3) Defina uma função recursiva uneOrdenado :: [Int] -> [Int] -> [Int] 
@@ -63,6 +74,10 @@ uneOrdenado [1,2,3] [4,5,6]
 [1,2,3,4,5,6]
 -}
 
+
+
+
+
 {-
 4) Usando a função uneOrdenado, defina uma função ordenaUne :: [Int] -> [Int] 
 que particiona sucessivamente uma lista na metade até atingir partições de tamanho 1 para 
@@ -74,29 +89,44 @@ ordenaUne []  = []
 ordenaUne [x] = [x]
 ordenaUne xs = uneOrdenado (ordenaUne ys) (ordenaUne zs)
             where (ys,zs)     = splitAt ((length xs) `div` 2) xs
+
 {-
+ordenaUne [1,2,0]
+uneOrdenado (ordenaUne [1]) (ordenaUne [2,0])
+uneOrdenado (uneOrdenado (ordenaUne []) (ordenaUne [1])) (uneOrdenado (ordenaUne [2]) (ordenaUne [0]))
+uneOrdenado (uneOrdenado [] [1]) (uneOrdenado (uneOrdenado (ordenaUne []) (ordenaUne [2])) (uneOrdenado (ordenaUne []) (ordenaUne [0]))
+uneOrdenado (uneOrdenado [] [1]) (uneOrdenado ((uneOrdenado [] [2]) (uneOrdenado [] [0])))
+uneOrdenado (uneOrdenado [] [1]) (uneOrdenado ([2] [0]))
+uneOrdenado (uneOrdenado [] [1]) [2,0])
+uneOrdenado [1] [2,0]
+[0,1,2]
+-}
 
 
-ß
+
+{-
 5) Explique a função padrão zipWith cuja definição é a seguinte:
 zipWith :: (a -> b -> c) -> [a] -> [b] -> [c]
 zipWith f _ _           = []
 zipWith f (x:xs) (y:ys) = f x y : zipWith (f xs ys)
 
-A função ZipWith tem como objetivo entrelassar os elementos entre duas listas utilizando as regras de uma outra função passada como parâmetro.
-Por conta disso, temos três parametros, o primeiro uma função que recebe dois elementos quaisquer e os substitui por uma lista.
+A função ZipWith tem como objetivo calcular os elementos entre duas listas de forma entrelaçada através de uma outra função matemática como parâmetro.
+Por conta disso, temos três parâmetros, o primeiro uma função matemática e os outros dois são listas.
 
+Passo a passo:
 
+zipWith (+)[0,1][2,3]
++ 0 2 : zipWith (+ [1] [3])
+2 : + 1 3 : zipWith (+ [] [])
+2 : 4 : zipWith (+ [] [])
+2 : 4 : []
+[2, 4]
 
-
-ZipWith recebe uma função e duas listas como parâmetros e então junta as duas listas aplicando a função entre os elementos correspondentes.
-O primeiro parâmetro é uma função que recebe duas coisas e produz uma terceira. O segundo e o terceiro parâmetro são listas. O resultado é também uma lista.
-O primeiro tem que ser uma lista de as, porque a função de junção recebe as como primeiros argumentos.
-A segunda tem que ser uma lista de bs, porque o segundo argumento da função é do tipo b. O resultado é uma lista de cs.
-Se a declaração do tipo de uma função diz que ela aceita uma função a -> b -> c como parâmetro, ela também aceitará uma função a -> a -> a, mas não o contrário!
-O corpo da função no último pattern é também parecido com zip normal, mas ele não faz (x,y), e sim f x y.
-Uma única função de alta ordem pode ser usada para uma enorme variedade de tarefas se é suficientemente geral.
 -}
+
+
+
+
 
 {-
 6) A função cresc determina se uma lista está em ordem crescente:
@@ -105,10 +135,19 @@ cresc :: (Ord a) => [a] -> Bool
 cresc []       = True
 cresc [x]      = True
 cresc (x:y:xs) = (x <= y) && cresc (y:xs)
+
+
+Dê uma definição equivalente da função cresc usando a função zipWith.
 -}
 
 cresc :: (Ord a) => [a] -> Bool
 cresc xs = and ( zipWith (<=) xs (tail xs))
+
+-- cresc [3,1,2]
+-- cresc [3] and ( zipWith (<=) [1,2])
+-- cresc [1] and ( zipWith (<=) [2])
+-- cresc [2] and ( zipWith (<=) [])
+-- False
 
 
 {-
